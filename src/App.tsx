@@ -1,12 +1,34 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import darkModeTheme from "./theme/darkModeTheme";
 import lightModeTheme from "./theme/lightModeTheme";
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const theme = localStorage.getItem("theme");
+
+    if (theme) {
+      if (theme === "DARK") {
+        setIsDarkMode(true);
+      } else {
+        setIsDarkMode(false);
+      }
+    } else {
+      setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }, []);
+
+  const onClickToggleButton = useCallback(() => {
+    if (isDarkMode) {
+      setIsDarkMode(false);
+      localStorage.setItem("theme", "LIGHT");
+    } else {
+      setIsDarkMode(true);
+      localStorage.setItem("theme", "DARK");
+    }
+  }, [isDarkMode]);
 
   return (
     <ThemeProvider theme={isDarkMode ? darkModeTheme : lightModeTheme}>
@@ -22,7 +44,7 @@ function App() {
           more recently with desktop publishing software like Aldus PageMaker
           including versions of Lorem Ipsum.
         </div>
-        <button onClick={() => setIsDarkMode((prevState) => !prevState)}>
+        <button onClick={() => onClickToggleButton()}>
           {isDarkMode ? "LIGHT MODE" : "DARK MODE"}
         </button>
       </Pub.Container>
