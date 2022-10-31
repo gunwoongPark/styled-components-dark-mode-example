@@ -1,9 +1,12 @@
+import { useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import darkModeTheme from "./theme/darkModeTheme";
 import lightModeTheme from "./theme/lightModeTheme";
 
 function App() {
-  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
 
   return (
     <ThemeProvider theme={isDarkMode ? darkModeTheme : lightModeTheme}>
@@ -19,7 +22,9 @@ function App() {
           more recently with desktop publishing software like Aldus PageMaker
           including versions of Lorem Ipsum.
         </div>
-        <button>{isDarkMode ? "LIGHT MODE" : "DARK MODE"}</button>
+        <button onClick={() => setIsDarkMode((prevState) => !prevState)}>
+          {isDarkMode ? "LIGHT MODE" : "DARK MODE"}
+        </button>
       </Pub.Container>
     </ThemeProvider>
   );
